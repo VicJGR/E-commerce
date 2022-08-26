@@ -4,14 +4,16 @@ import sequelize from "../loadSequelize.js";
 
 
 //DEFINICION DEL MODELO
-const Articulo = sequelize.define('Articulo', {
+const Clientes = sequelize.define('Clientes', {
+    email: DataTypes.STRING(150),
     nombre: DataTypes.STRING(150),
-    descripcion: DataTypes.STRING(1500),
-    precio: DataTypes.FLOAT(10,2),
-    estoc: DataTypes.FLOAT(10,2)
+    direccion: DataTypes.STRING(150),
+    cpostal: DataTypes.STRING(10),
+    poblacion: DataTypes.STRING(100),
+    password: DataTypes.STRING(150)
 
 
-}, { tableName: 'articulo', timestamps: false });
+}, { tableName: 'clientes', timestamps: false });
 
 const Facturas = sequelize.define('Facturas', {
     numero: DataTypes.STRING(15),
@@ -19,53 +21,31 @@ const Facturas = sequelize.define('Facturas', {
     direccion: DataTypes.STRING(150),
     poblacion: DataTypes.STRING(100),
     cpostal: DataTypes.STRING(10),
-    nombre: DataTypes.STRING(150)
-
-}, { tableName: 'facturas', timestamps: false });
-
-const Lineas = sequelize.define('Lineas', {
-    cantidad: DataTypes.FLOAT(10,2),
-    FacturasId: {
+    nombre: DataTypes.STRING(150),
+    clientesId: {
         type: DataTypes.INTEGER,
-        field: "FacturasId",
+        field: "clientesId",
         references: {
-            model: Facturas,
+            model: Clientes,
             key: "id"
         }
     },
-    ArticuloId: {
-        field: "ArticuloId",
-        type: DataTypes.INTEGER,
-        references: {
-            model: Articulo,
-            key: "id"
-        }
-    }},
-     { tableName: 'lineas', timestamps: false });
 
-    Facturas.belongsToMany(Articulo, {through: Lineas});
-    Articulo.belongsToMany(Facturas, {through: Lineas});
+}, { tableName: 'facturas', timestamps: false });
 
 
-
-
+Clientes.hasMany(Facturas);
 
 const router = express.Router();
 
-// GET lista de todos los articulos
-// vinculamos la ruta /api/articulos a la función declarada
-// si todo ok devolveremos un objeto tipo:
-//     {ok: true, data: [lista_de_objetos_articulo...]}
-// si se produce un error:
-//     {ok: false, error: mensaje_de_error}
 
 router.get('/', function (req, res, next) {
 
     sequelize.sync().then(() => {
-        Articulo.findAll()
-            .then(articulos => res.json({
+        Clientes.findAll()
+            .then(clientes => res.json({
                 ok: true,
-                data: articulos
+                data: clientes
             }))
             .catch(error => res.json({
                 ok: false,
@@ -80,14 +60,14 @@ router.get('/', function (req, res, next) {
 
 });
 
-// GET de un solo articulo
+// GET de un solo Clientes
 router.get('/:id', function (req, res, next) {
     sequelize.sync().then(() => {
-        Articulo.findOne({ where: { id: req.params.id } })
-            // .then(Articulo => Articulo.get({plain: true}))
-            .then(Articulo => res.json({
+        Clientes.findOne({ where: { id: req.params.id } })
+            // .then(Clientes => Clientes.get({plain: true}))
+            .then(Clientes => res.json({
                 ok: true,
-                data: Articulo
+                data: Clientes
             }))
             .catch(error => res.json({
                 ok: false,
@@ -101,12 +81,10 @@ router.get('/:id', function (req, res, next) {
     });
 });
 
-
-
-// POST, creació d'un nou articulo
+// POST, creació d'un nou Clientes
 router.post('/', function (req, res, next) {
     sequelize.sync().then(() => {
-        Articulo.create(req.body)
+        Clientes.create(req.body)
             .then((item) => item.save())
             .then((item) => res.json({ ok: true, data: item }))
             .catch((error) => res.json({ ok: false, error }))
@@ -120,10 +98,10 @@ router.post('/', function (req, res, next) {
 });
 
 
-// put modificació d'un articulo
+// put modificació d'un Clientes
 router.put('/:id', function (req, res, next) {
     sequelize.sync().then(() => {
-        Articulo.findOne({ where: { id: req.params.id } })
+        Clientes.findOne({ where: { id: req.params.id } })
             .then((al) =>
                 al.update(req.body)
             )
@@ -146,11 +124,11 @@ router.put('/:id', function (req, res, next) {
 
 
 
-// DELETE elimina l'articulo id
+// DELETE elimina l'Clientes id
 router.delete('/:id', function (req, res, next) {
 
     sequelize.sync().then(() => {
-        Articulo.destroy({ where: { id: req.params.id } })
+        Clientes.destroy({ where: { id: req.params.id } })
             .then((data) => res.json({ ok: true, data }))
             .catch((error) => res.json({ ok: false, error }))
 

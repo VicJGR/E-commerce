@@ -4,7 +4,7 @@ const router = express.Router();
 
 
 router.get('/', function (req, res, next) {
-    res.end("E-commerceAPI");
+    res.end("Tonto el que lo lea");
     });
 
 
