@@ -25,7 +25,7 @@ const Facturas = sequelize.define('Facturas', {
 
 const Lineas = sequelize.define('Lineas', {
     cantidad: DataTypes.FLOAT(10,2),
-    FacturasId: {
+    Facturas_id: {
         type: DataTypes.INTEGER,
         field: "FacturasId",
         references: {
@@ -33,7 +33,7 @@ const Lineas = sequelize.define('Lineas', {
             key: "id"
         }
     },
-    ArticuloId: {
+    Articulo_id: {
         field: "ArticuloId",
         type: DataTypes.INTEGER,
         references: {

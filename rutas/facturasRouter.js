@@ -10,7 +10,9 @@ const Facturas = sequelize.define('Facturas', {
     direccion: DataTypes.STRING(150),
     poblacion: DataTypes.STRING(100),
     cpostal: DataTypes.STRING(10),
-    nombre: DataTypes.STRING(150)
+    nombre: DataTypes.STRING(150), 
+    clientes_id: DataTypes.INTEGER, 
+
 
 }, { tableName: 'facturas', timestamps: false });
 
@@ -25,7 +27,7 @@ const Articulo = sequelize.define('Articulo', {
 
 const Lineas = sequelize.define('Lineas', {
     cantidad: DataTypes.FLOAT(10,2),
-    FacturasId: {
+    Facturas_id: {
         type: DataTypes.INTEGER,
         field: "FacturasId",
         references: {
@@ -33,7 +35,7 @@ const Lineas = sequelize.define('Lineas', {
             key: "id"
         }
     },
-    ArticuloId: {
+    Articulo_id: {
         field: "ArticuloId",
         type: DataTypes.INTEGER,
         references: {
@@ -71,4 +73,80 @@ router.get('/', function (req, res, next) {
 
 });
 
+router.get('/:id', function (req, res, next) {
+    sequelize.sync().then(() => {
+        Facturas.findOne({ where: { id: req.params.id } })
+            // .then(Facturas => Facturas.get({plain: true}))
+            .then(Facturas => res.json({
+                ok: true,
+                data: Facturas
+            }))
+            .catch(error => res.json({
+                ok: false,
+                error: error
+            }))
+    }).catch((error) => {
+        res.json({
+            ok: false,
+            error: error
+        })
+    });
+});
+
+router.post('/', function (req, res, next) {
+    sequelize.sync().then(() => {
+        Facturas.create(req.body)
+            .then((item) => item.save())
+            .then((item) => res.json({ ok: true, data: item }))
+            .catch((error) => res.json({ ok: false, error }))
+
+    }).catch((error) => {
+        res.json({
+            ok: false,
+            error: error
+        })
+    });
+});
+
+router.put('/:id', function (req, res, next) {
+    sequelize.sync().then(() => {
+        Facturas.findOne({ where: { id: req.params.id } })
+            .then((al) =>
+                al.update(req.body)
+            )
+            .then((ret) => res.json({
+                ok: true,
+                data: ret
+            }))
+            .catch(error => res.json({
+                ok: false,
+                error: error
+            }));
+
+    }).catch((error) => {
+        res.json({
+            ok: false,
+            error: error
+        })
+    });
+});
+
+
+
+// DELETE elimina l'Clientes id
+router.delete('/:id', function (req, res, next) {
+
+    sequelize.sync().then(() => {
+        Facturas.destroy({ where: { id: req.params.id } })
+            .then((data) => res.json({ ok: true, data }))
+            .catch((error) => res.json({ ok: false, error }))
+
+    }).catch((error) => {
+        res.json({
+            ok: false,
+            error: error
+        })
+    });
+
+});
 export default router;

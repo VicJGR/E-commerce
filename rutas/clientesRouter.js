@@ -22,9 +22,9 @@ const Facturas = sequelize.define('Facturas', {
     poblacion: DataTypes.STRING(100),
     cpostal: DataTypes.STRING(10),
     nombre: DataTypes.STRING(150),
-    clientesId: {
+    clientes_id: {
         type: DataTypes.INTEGER,
-        field: "clientesId",
+        field: "clientesid",
         references: {
             model: Clientes,
             key: "id"
